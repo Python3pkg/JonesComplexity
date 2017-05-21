@@ -3,7 +3,7 @@
     Based on https://github.com/PyCQA
     MIT License.
 """
-from __future__ import with_statement
+
 
 from operator import itemgetter
 import collections
@@ -43,7 +43,7 @@ class LineComplexityVisitor(ast.NodeVisitor):
         """
         Return a sorted list of line:nodes.
         """
-        od = sorted_x = OrderedDict(sorted(self.count.items(), key=itemgetter(1), reverse=True))
+        od = sorted_x = OrderedDict(sorted(list(self.count.items()), key=itemgetter(1), reverse=True))
         return od
 
     def score(self):
@@ -66,7 +66,7 @@ class LineComplexityVisitor(ast.NodeVisitor):
             else:
                 return (sortedLst[index] + sortedLst[index + 1])/2.0
 
-        return median(self.count.values())
+        return median(list(self.count.values()))
 
 class JonesComplexityChecker(object):
     """Jones complexity checker."""
@@ -109,7 +109,7 @@ class JonesComplexityChecker(object):
         sorted_items = visitor.sort()
         total_score = visitor.score()
 
-        for line, score in sorted_items.items():
+        for line, score in list(sorted_items.items()):
 
             if score > self.max_line_complexity:
                 text = self._line_error_tmpl % (int(line), int(score))
@@ -136,7 +136,7 @@ def get_code_complexity(code, max_line_complexity=15, max_jones_score=10, filena
     for lineno, offset, text, check in checker.run():
         complx.append('%s:%d:1: %s' % (filename, int(lineno), text))
 
-    print('\n'.join(complx))
+    print(('\n'.join(complx)))
     return complx
 
 def main(argv=None):
@@ -160,7 +160,7 @@ def main(argv=None):
     score = visitor.score()
 
     print("Line counts:")
-    print(json.dumps(sorted_items, indent=4))
+    print((json.dumps(sorted_items, indent=4)))
 
     print("Jones Score:")
     print(score)
